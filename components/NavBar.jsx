@@ -4,6 +4,8 @@ import React, { useRef, useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import gsap from "gsap";
+import { motion, AnimatePresence } from 'framer-motion';
+import { Menu, X, ChevronDown } from 'lucide-react';
 import styles from "../styles/NavBar.module.css";
 
 const NavBar = () => {
@@ -13,6 +15,8 @@ const NavBar = () => {
   const [helpMenuOpen, setHelpMenuOpen] = useState(false);
   const [gsapReady, setGsapReady] = useState(false);
   const [visible, setVisible] = useState(true);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [forceVisible, setForceVisible] = useState(false); // Force navbar to be visible when pill is clicked
   const lastScroll = useRef(0);
 
   // Ensure GSAP is properly loaded
@@ -38,10 +42,20 @@ const NavBar = () => {
         requestAnimationFrame(() => {
           const currentScroll = window.scrollY;
           
-          if (currentScroll > lastScroll.current && currentScroll > 100) {
+          // Set scrolled state for pill navbar
+          setIsScrolled(currentScroll > 100);
+          
+          // Only hide navbar on scroll down, never on scroll up
+          if (currentScroll > lastScroll.current && currentScroll > 100 && !forceVisible) {
             setVisible(false);
-          } else if (currentScroll < lastScroll.current || currentScroll <= 100) {
+          } else if (currentScroll <= 100) {
             setVisible(true);
+            setForceVisible(false); // Reset force visible when at top
+          }
+          
+          // If navbar is force visible and user continues scrolling down significantly (more threshold)
+          if (forceVisible && currentScroll > lastScroll.current && (currentScroll - lastScroll.current) > 100) {
+            setForceVisible(false); // Allow navbar to hide again after scrolling down more
           }
           
           lastScroll.current = currentScroll;
@@ -53,7 +67,7 @@ const NavBar = () => {
 
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [forceVisible]);
 
   // Safe GSAP wrapper function
   const safeGSAP = (operation) => {
@@ -647,8 +661,18 @@ const NavBar = () => {
 
   return (
     <>
-      {/* Main Navbar */}
-      <div className={`${styles.navbarContainer} ${menuOpen ? styles.menuOpen : ''} ${visible ? styles.navVisible : styles.navHidden}`}>
+      {/* Main Navbar - Original functionality preserved */}
+      <div 
+        className={`${styles.navbarContainer} ${menuOpen ? styles.menuOpen : ''} ${(visible || forceVisible) ? styles.navVisible : styles.navHidden}`}
+        style={{
+          // Add animation when navbar appears from pill click
+          transition: forceVisible ? 'all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55)' : 'all 0.3s ease-out',
+          transform: forceVisible ? 
+            `translateX(-50%) scale(1.05) translateY(0)` : 
+            `translateX(-50%) scale(1) translateY(0)`,
+          animation: forceVisible ? 'navbarBounceIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55)' : 'none'
+        }}
+      >
         <nav className={`${styles.nav} ${menuOpen ? styles.menuOpen : ''}`}>
           <div className={styles.logo}>
             <a href="https://www.gronsdodgeball.nl" target="_blank">
@@ -761,6 +785,93 @@ const NavBar = () => {
           </div>
         </nav>
       </div>
+
+      {/* Floating Pill Navbar - Shows navbar when clicked */}
+      <AnimatePresence>
+        {isScrolled && !visible && !forceVisible && (
+          <motion.div
+            initial={{ 
+              opacity: 0, 
+              scale: 0.3, 
+              y: -80,
+              rotate: -180 
+            }}
+            animate={{ 
+              opacity: 1, 
+              scale: 1, 
+              y: 0,
+              rotate: 0 
+            }}
+            exit={{ 
+              opacity: 0, 
+              scale: 0.3, 
+              y: -80,
+              rotate: 180 
+            }}
+            transition={{ 
+              duration: 0.6, 
+              ease: [0.68, -0.55, 0.265, 1.55], // Bouncy easing
+              rotate: { duration: 0.8 }
+            }}
+            className="fixed top-4 left-1/2 transform -translate-x-1/2 z-[100000]"
+          >
+            <motion.button
+              onClick={() => {
+                console.log('Pill clicked!'); // Debug log
+                console.log('Before click - visible:', visible, 'forceVisible:', forceVisible);
+                // Immediately set the states
+                setForceVisible(true);
+                setVisible(true);
+                console.log('After click - States set: forceVisible=true, visible=true'); // Debug log
+                
+                // Reset forceVisible after animation completes to allow normal behavior
+                setTimeout(() => {
+                  setForceVisible(false);
+                }, 1000); // Reset after bounce animation completes
+              }}
+              className="w-[60px] h-[60px] rounded-full flex items-center justify-center transition-all duration-300 shadow-lg"
+              style={{
+                backgroundColor: '#141414'
+              }}
+              whileHover={{ 
+                scale: 1.1,
+                backgroundColor: '#1a1a1a',
+                rotate: 5,
+                boxShadow: '0 20px 40px rgba(20, 20, 20, 0.4)'
+              }}
+              whileTap={{ 
+                scale: 0.9,
+                rotate: -5 
+              }}
+              animate={{
+                // Subtle floating animation
+                y: [0, -3, 0],
+              }}
+              transition={{
+                y: {
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: "easeInOut"
+                }
+              }}
+            >
+              <motion.div
+                animate={{
+                  // Menu icon breathing effect
+                  scale: [1, 1.05, 1],
+                }}
+                transition={{
+                  duration: 1.5,
+                  repeat: Infinity,
+                  ease: "easeInOut"
+                }}
+              >
+                <Menu className="h-6 w-6 relative z-10" style={{ color: '#F0EEE7' }} />
+              </motion.div>
+            </motion.button>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Sliding Cover */}
       <div

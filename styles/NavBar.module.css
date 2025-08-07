@@ -269,4 +269,23 @@
   opacity: 1;
   transform: translateX(-50%) translateY(0);
   pointer-events: auto;
+}
+
+/* Keyframes for navbar bounce animation when appearing from pill */
+@keyframes navbarBounceIn {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-100%) scale(0.3);
+  }
+  50% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(10px) scale(1.1);
+  }
+  70% {
+    transform: translateX(-50%) translateY(-5px) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
 } 

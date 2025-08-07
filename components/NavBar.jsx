@@ -884,7 +884,7 @@ const NavBar = () => {
                           <Link
                             href={moreLink.href}
                             ref={(el) => (moreItemRefs.current[moreIndex] = el)}
-                            className={`${styles.moreMenuLink} text-xl sm:text-xl md:text-2xl lg:text-4xl xl:text-[85px] leading-none hover:pl-6 transition-all duration-600 font-bebas-neue font-bold block w-fit text-black`}
+                            className={`${styles.moreMenuLink} text-lg sm:text-xl md:text-2xl lg:text-4xl xl:text-[85px] leading-none hover:pl-6 transition-all duration-600 font-bebas-neue font-bold block w-fit text-black`}
                             onClick={() => {
                               closeMenu();
                               closeMoreMenu();
@@ -919,7 +919,7 @@ const NavBar = () => {
                                 closeMoreMenu();
                               }
                             }}
-                            className={`${styles.moreMenuLink} text-xl sm:text-xl md:text-2xl lg:text-4xl xl:text-[85px] leading-none hover:pl-6 transition-all duration-600 font-bebas-neue font-bold block w-fit`}
+                            className={`${styles.moreMenuLink} text-lg sm:text-xl md:text-2xl lg:text-4xl xl:text-[85px] leading-none hover:pl-6 transition-all duration-600 font-bebas-neue font-bold block w-fit`}
                           >
                             {moreLink.label}
                             <div

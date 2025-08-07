@@ -27,18 +27,18 @@ export default function Footer() {
           aria-label="Company"
         >
           <h4>Company</h4>
-          <Link href="#">About</Link>
-          <Link href="#">Join Us</Link>
-          <Link href="#">Events</Link>
-          <Link href="#">FAQ</Link>
+          <Link href="/about-us">About</Link>
+          <Link href="/#sessions">Join Us</Link>
+          <Link href="/#sessions">Events</Link>
+          <Link href="/#faq">FAQ</Link>
         </nav>
 
         {/* Community */}
         <nav className={styles.footerLinks} aria-label="Community">
           <h4>Community</h4>
-          <Link href="#">WhatsApp</Link>
-          <Link href="#">Discord</Link>
-          <Link href="#">Newsletter</Link>
+          <Link href="https://chat.whatsapp.com/your-group-id" target="_blank">WhatsApp</Link>
+          <Link href="https://discord.gg/your-discord-server" target="_blank">Discord</Link>
+          <Link href="/#contact">Newsletter</Link>
         </nav>
 
         {/* Legal */}
@@ -108,16 +108,7 @@ export default function Footer() {
         <div
           className={styles.paymentIcons}
           aria-label="Payment Methods"
-          style={{ position: "relative" }}
         >
-          <style>
-            {`
-              .${styles.paymentIcons} img:hover {
-                filter: none;
-                opacity: 1;
-              }
-            `}
-          </style>
           <img
             src="/assets/paymenticons/ideal.svg"
             alt="iDEAL"

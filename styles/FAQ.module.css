@@ -78,7 +78,7 @@
   transition: transform 0.3s ease;
 }
 
-.faqItem[open] .toggle {
+.faqItem.open .toggle {
   transform: rotate(45deg);
 }
 

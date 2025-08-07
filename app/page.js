@@ -35,6 +35,7 @@ export default function HomePage() {
 
   // Add sections refs
   const addToSectionRefs = (el) => {
+    console.log("addToSectionRefs", el);  
     if (el && !sectionRefs.current.includes(el)) {
       sectionRefs.current.push(el);
     }
@@ -272,14 +273,8 @@ export default function HomePage() {
     };
   }, []); */
 
-  useEffect(() => {
-    const loader = document.getElementById("loader");
-    const onAnimEnd = (e) => {
-      if (e.animationName === "slideUp") loader.remove();
-    };
-    loader?.addEventListener("animationend", onAnimEnd);
-    return () => loader?.removeEventListener("animationend", onAnimEnd);
-  }, []);
+  // LoadingIndicator component manages its own lifecycle via React state
+  // No manual DOM cleanup needed
 
   return (
     <>
@@ -302,9 +297,11 @@ export default function HomePage() {
           }}
         />
 
+        {/* NavBar - Fixed at top */}
+        <NavBar />
+        
         {/* hero section */}
-        <div ref={heroRef} className="relative min-h-screen flex items-center justify-center px-4">
-          <NavBar />
+        <div ref={heroRef} className="relative min-h-screen flex items-center justify-center px-4 pt-0">
           <Image
             src="/assets/bg/letsplaydodgeball.svg"
             alt="Hero Background"
@@ -313,7 +310,7 @@ export default function HomePage() {
             className="absolute top-[10%] right-[15%] size-50 xl:block hidden"
           />
           {/* Updated Widget Grid */}
-          <div className="grid grid-cols-20 relative z-50 gap-4 grid-flow-dense auto-rows-[72px] mx-auto max-w-[336px] md:max-w-[864px] pt-32 md:pt-16 lg:pt-0 pb-24 md:pb-16 lg:pb-0">
+          <div className="grid grid-cols-20 relative z-50 gap-4 grid-flow-dense auto-rows-[72px] mx-auto max-w-[336px] md:max-w-[864px] mt-16 pt-16 sm:pt-16 md:pt-16 lg:pt-0 pb-24 md:pb-16 lg:pb-0">
             {widgets.slice(0, visibleCount).map((w, i) => (
               <Widget
                 key={w.id}
@@ -333,8 +330,8 @@ export default function HomePage() {
             src="/assets/bg/checkschedule.svg"
             alt="Hero Background"
             width={20}
-            height={20}
-            className="absolute bottom-[50px] 2xl:left-[15%] xl:left-[60px]  size-50 xl:block hidden"
+            height={15}
+            className="absolute bottom-[50px] 2xl:left-[10%] xl:left-[5%]  size-40 xl:block hidden"
           />
 
           <ScrollHint />
@@ -344,21 +341,21 @@ export default function HomePage() {
         <div className="relative">
           <div
             id="partner"
-            className="min-h-[100vh] bg-[#111] pt-16 md:pt-20 lg:pt-24"
+            className=" sm:min-h-[90vh] lg:min-h-[100vh] bg-[#111] pt-16 md:pt-20 lg:pt-[50px]"
             ref={addToSectionRefs}
           >
             <Partners />
           </div>
-          <div id="about" ref={addToSectionRefs}>
+          <div id="about" className="min-h-[60vh] sm:min-h-[50vh] lg:min-h-[80vh] lg:pt-[50px]" ref={addToSectionRefs}>
             <About />
           </div>
-          <div id="sessions" ref={addToSectionRefs}>
+          <div id="sessions" className="min-h-[50vh] sm:min-h-[50vh] lg:min-h-[80vh] lg:pt-[100px] lg:pb-[50px]" ref={addToSectionRefs}>
             <UpcomingSessions />
           </div>
-          <div id="memberships" ref={addToSectionRefs}>
+          <div id="memberships" className="min-h-[60vh] sm:min-h-[50vh] lg:min-h-[80vh] lg:pt-[100px]" ref={addToSectionRefs}>
             <PricingPlans />
           </div>
-          <div id="funds" ref={addToSectionRefs}>
+          <div id="funds" className="min-h-[60vh] sm:min-h-[50vh] lg:min-h-[80vh] lg:pt-[100px]" ref={addToSectionRefs}>
             <FundsAccessibility />
           </div>
           {/* <div
@@ -375,16 +372,16 @@ export default function HomePage() {
             >
               <Locations />
             </div> */}
-          <div id="reviews" className="bg-[#111]" ref={addToSectionRefs}>
+          <div id="reviews" className="min-h-screen sm:min-h-[50vh] lg:min-h-[100vh] bg-[#111] lg:pt-[50px]" ref={addToSectionRefs}>
             <Reviews />
           </div>
-          <div id="faq" ref={addToSectionRefs}>
+          <div id="faq" className="min-h-[60vh] sm:min-h-[50vh] lg:min-h-[80vh] lg:pt-[100px]" ref={addToSectionRefs}>
             <FAQ />
           </div>
-          <div id="contact" ref={addToSectionRefs}>
+          <div id="contact" className="min-h-[60vh] sm:min-h-[50vh] lg:min-h-[80vh] lg:pt-[30px]" ref={addToSectionRefs}>
             <ContactForm />
           </div>
-          <div id="footer" ref={addToSectionRefs}>
+          <div id="footer" className="py-8 md:py-12 lg:pt-[50px]" ref={addToSectionRefs}>
             <Footer />
           </div>
         </div>

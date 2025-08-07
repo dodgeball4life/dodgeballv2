@@ -118,7 +118,7 @@ export default function PricingPlans() {
       L1440,14
       L0,14
       Z"
-            fill="#F5E6D3"
+            fill="#F0EEE7"
           />
         </svg>
       </div> */}
@@ -127,7 +127,7 @@ export default function PricingPlans() {
         alt="Hero Background"
         width={20}
         height={20}
-        className="absolute top-[20px] right-[10%] size-45 xl:block hidden"
+        className="absolute top-[17px] right-[10%] size-45 xl:block hidden"
       />
 
        <Image
@@ -135,7 +135,7 @@ export default function PricingPlans() {
         alt="Hero Background"
         width={20}
         height={20}
-        className="absolute bottom-[-40px] left-[6%] size-35 xl:block hidden"
+        className="absolute bottom-[-5px] left-[8%] size-35 xl:block hidden"
       />
       <div
         className={`${styles.pricingPlan}  relative z-50`}

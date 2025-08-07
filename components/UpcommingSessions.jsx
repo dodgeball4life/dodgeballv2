@@ -13,6 +13,11 @@ const UpcomingSessions = () => {
   const [sessions, setSessions] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  // Mouse drag state
+  const isDragging = useRef(false);
+  const startX = useRef(0);
+  const scrollLeft = useRef(0);
+
   useEffect(() => {
     fetchSessions();
   }, []);
@@ -67,6 +72,65 @@ const UpcomingSessions = () => {
     const maxScrollLeft = el.scrollWidth - el.clientWidth;
     const progress = maxScrollLeft > 0 ? (scrollLeft / maxScrollLeft) * 100 : 0;
     progressFillRef.current.style.width = `${progress}%`;
+  };
+
+  // Mouse drag handlers
+  const handleMouseDown = (e) => {
+    if (!timelineRef.current) return;
+    isDragging.current = true;
+    startX.current = e.pageX - timelineRef.current.offsetLeft;
+    scrollLeft.current = timelineRef.current.scrollLeft;
+    timelineRef.current.style.cursor = 'grabbing';
+    timelineRef.current.style.scrollBehavior = 'auto';
+    e.preventDefault(); // Prevent text selection
+  };
+
+  const handleMouseMove = (e) => {
+    if (!isDragging.current || !timelineRef.current) return;
+    e.preventDefault();
+    const x = e.pageX - timelineRef.current.offsetLeft;
+    const walk = (x - startX.current) * 1.5; // Optimized scroll speed
+    timelineRef.current.scrollLeft = scrollLeft.current - walk;
+  };
+
+  const handleMouseUp = () => {
+    if (!timelineRef.current) return;
+    isDragging.current = false;
+    timelineRef.current.style.cursor = 'grab';
+    timelineRef.current.style.scrollBehavior = 'smooth';
+  };
+
+  const handleMouseLeave = () => {
+    if (!timelineRef.current) return;
+    isDragging.current = false;
+    timelineRef.current.style.cursor = 'grab';
+    timelineRef.current.style.scrollBehavior = 'smooth';
+  };
+
+  // Keyboard navigation
+  const handleKeyDown = (e) => {
+    if (!timelineRef.current) return;
+    
+    const cardWidth = 296; // card min-width + gap
+    
+    switch (e.key) {
+      case 'ArrowLeft':
+        e.preventDefault();
+        timelineRef.current.scrollBy({ left: -cardWidth, behavior: 'smooth' });
+        break;
+      case 'ArrowRight':
+        e.preventDefault();
+        timelineRef.current.scrollBy({ left: cardWidth, behavior: 'smooth' });
+        break;
+      case 'Home':
+        e.preventDefault();
+        timelineRef.current.scrollTo({ left: 0, behavior: 'smooth' });
+        break;
+      case 'End':
+        e.preventDefault();
+        timelineRef.current.scrollTo({ left: timelineRef.current.scrollWidth, behavior: 'smooth' });
+        break;
+    }
   };
 
   const handleShare = (title) => {
@@ -150,7 +214,6 @@ const UpcomingSessions = () => {
           display: flex;
           justify-content: center;
           padding: 3rem 1rem 5rem;
-          min-height: 100vh;
           position: relative;
         }
 
@@ -193,6 +256,8 @@ const UpcomingSessions = () => {
           -webkit-overflow-scrolling: touch;
           scrollbar-width: none;
           -ms-overflow-style: none;
+          cursor: grab;
+          user-select: none;
         }
 
         .timeline::-webkit-scrollbar {
@@ -429,8 +494,13 @@ const UpcomingSessions = () => {
               ref={timelineRef}
               className="timeline"
               tabIndex={0}
-              aria-label="Upcoming dodgeball sessions timeline"
+              aria-label="Upcoming dodgeball sessions timeline. Use arrow keys to navigate, Home/End to jump to start/end"
               onScroll={handleScroll}
+              onMouseDown={handleMouseDown}
+              onMouseMove={handleMouseMove}
+              onMouseUp={handleMouseUp}
+              onMouseLeave={handleMouseLeave}
+              onKeyDown={handleKeyDown}
             >
               {isLoading ? (
                 <p className="no-sessions">Loading sessions...</p>

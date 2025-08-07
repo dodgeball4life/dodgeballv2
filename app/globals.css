@@ -12,11 +12,11 @@
 }
 
 :root {
-   --beige: #f5e6d3;
-  --black: #0d0c0b;
-  --orange: #f57f3b;
-  --lime: #d5df26;
-  --text: #1a1a1a;
+   --beige: #F0EEE7;
+  --black: #141414;
+  --orange: #E77E28;
+  --lime: #D5DF26;
+  --text: #141414;
   font-family: "Inter", sans-serif;
 }
 
@@ -38,54 +38,97 @@ body {
 #loader {
   position: fixed;
   inset: 0;
-  background: black;
+  background: linear-gradient(135deg, #F0EEE7, #d4cec1);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 999999999;
   animation: slideUp 0.8s ease-in-out forwards;
   animation-delay: 2s;
+  overflow: hidden;
+}
+
+.loading-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 999999;
+  background: linear-gradient(135deg, #F0EEE7, #d4cec1);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+  overflow: hidden;
+}
+
+.loading-screen.animate-out {
+  animation: slideUp 0.8s ease-in-out forwards;
 }
 
 /* === LOGO WRAPPER === */
 .logo-wrapper {
-  animation: logoSlideUp 0.8s ease-in-out forwards;
-  position: absolute;
-  opacity: 0.5;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 5px;
+  gap: 1rem;
   justify-content: center;
 }
 
 /* === LOGO SVG === */
 .logo-loader {
-  width: 200px;
+  width: clamp(120px, 30vw, 160px);
   height: auto;
+  animation: logoFloat 2s ease-in-out infinite;
 }
 
-/* Animate each path to fill from bottom (white reveal) */
-.logo-loader path {
-  fill: orange; /* Final color */
-  clip-path: inset(100% 0 0 0); /* Start hidden from bottom */
-  animation: fillUp 1s ease-in-out 1s forwards;
+.loading-text {
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  color: #0d0c0b;
+  opacity: 0.7;
+  animation: pulse 1.5s ease-in-out infinite;
 }
+
+.loading-dots {
+  display: flex;
+  gap: 4px;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  background: #0d0c0b;
+  border-radius: 50%;
+  animation: dotBounce 1.4s ease-in-out infinite both;
+}
+
+.dot:nth-child(1) { animation-delay: -0.32s; }
+.dot:nth-child(2) { animation-delay: -0.16s; }
+.dot:nth-child(3) { animation-delay: 0s; }
 
 /* Optional: stagger effect if multiple paths */
 
 /* Add more nth-child selectors if needed */
 
 /* === KEYFRAMES === */
-@keyframes fillUp {
-  0% {
-    clip-path: inset(100% 0 0 0);
+@keyframes logoFloat {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
+}
+
+@keyframes dotBounce {
+  0%, 80%, 100% {
+    transform: scale(0.8);
+    opacity: 0.5;
   }
-  100% {
-    clip-path: inset(0 0 0 0);
+  40% {
+    transform: scale(1.2);
+    opacity: 1;
   }
 }
 

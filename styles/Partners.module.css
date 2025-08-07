@@ -1,5 +1,4 @@
 .parallaxSection {
-  height: 100vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -121,6 +120,7 @@
 @media (max-width: 600px) {
   .parallaxSection {
     padding: 15px 10px;
+    height: 70vh;
   }
   
   .partnersTitle {

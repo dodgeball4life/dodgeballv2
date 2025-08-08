@@ -149,12 +149,14 @@ export default function PricingPlans() {
           <button
             className={activeTab === "adult" ? styles.active : ""}
             onClick={() => setActiveTab("adult")}
+            onMouseEnter={() => setActiveTab("adult")}
           >
             Adult
           </button>
           <button
             className={activeTab === "youth" ? styles.active : ""}
             onClick={() => setActiveTab("youth")}
+            onMouseEnter={() => setActiveTab("youth")}
           >
             Youth
           </button>

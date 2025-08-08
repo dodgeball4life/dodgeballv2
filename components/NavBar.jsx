@@ -839,7 +839,11 @@ const NavBar = () => {
           transform: forceVisible ? 
             `translateX(-50%) scale(1.05) translateY(0)` : 
             `translateX(-50%) scale(1) translateY(0)`,
-          animation: forceVisible ? 'navbarBounceIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55)' : 'none'
+          animation: forceVisible ? 'navbarBounceIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55)' : 'none',
+          // Performance optimizations
+          willChange: 'transform, opacity',
+          backfaceVisibility: 'hidden',
+          transform3d: 'translateZ(0)' // Hardware acceleration
         }}
       >
         <nav className={`${styles.nav} ${menuOpen ? styles.menuOpen : ''}`}>
@@ -1002,7 +1006,11 @@ const NavBar = () => {
               }}
               className="w-[60px] h-[60px] rounded-full flex items-center justify-center transition-all duration-300 shadow-lg"
               style={{
-                backgroundColor: '#141414'
+                backgroundColor: '#141414',
+                // Performance optimizations
+                willChange: 'transform, opacity',
+                backfaceVisibility: 'hidden',
+                transform: 'translateZ(0)' // Hardware acceleration
               }}
               whileHover={{ 
                 scale: 1.1,

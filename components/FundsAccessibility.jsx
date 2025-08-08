@@ -172,7 +172,7 @@ export default function FundsAccessibility() {
             {[
               {
                 tag: "Groningen Only",
-                title: "Stadjerspas credit",
+                title: "STADJERSPAS CREDIT",
                 price: "€40",
                 unit: "/year",
                 billed: "Applies to memberships",
@@ -185,7 +185,7 @@ export default function FundsAccessibility() {
               },
               {
                 tag: "16 & Up",
-                title: "Adult Fund",
+                title: "ADULT FUND",
                 price: "€15",
                 unit: "/month",
                 billed: "Supported by Volwassenenfonds",
@@ -200,7 +200,7 @@ export default function FundsAccessibility() {
               },
               {
                 tag: "Age 4–16",
-                title: "Youth Fund",
+                title: "YOUTH FUND",
                 price: "€5",
                 unit: "/month",
                 billed: "Via Jeugdfonds Sport & Cultuur",

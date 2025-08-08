@@ -8,6 +8,10 @@
   left: 50%;
   transform: translateX(-50%);
   z-index: 100002;
+  /* Performance optimizations */
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  transform: translateX(-50%) translateZ(0); /* Hardware acceleration */
 }
 
 .nav {
@@ -275,17 +279,24 @@
 @keyframes navbarBounceIn {
   0% {
     opacity: 0;
-    transform: translateX(-50%) translateY(-100%) scale(0.3);
+    transform: translateX(-50%) translateY(-100%) scale(0.3) translateZ(0);
   }
   50% {
     opacity: 1;
-    transform: translateX(-50%) translateY(10px) scale(1.1);
+    transform: translateX(-50%) translateY(10px) scale(1.1) translateZ(0);
   }
   70% {
-    transform: translateX(-50%) translateY(-5px) scale(0.95);
+    transform: translateX(-50%) translateY(-5px) scale(0.95) translateZ(0);
   }
   100% {
     opacity: 1;
-    transform: translateX(-50%) translateY(0) scale(1);
+    transform: translateX(-50%) translateY(0) scale(1) translateZ(0);
   }
+}
+
+/* Performance optimization for all navbar states */
+.navVisible,
+.navHidden {
+  will-change: transform, opacity;
+  backface-visibility: hidden;
 } 

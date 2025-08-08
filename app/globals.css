@@ -157,3 +157,28 @@ body {
 .marqueeInner::-webkit-scrollbar {
   display: none;
 }
+
+/* === MOBILE SCROLL FIXES === */
+.scrollbar-hide {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Prevent horizontal overflow on mobile */
+@media (max-width: 768px) {
+  body {
+    overflow-x: hidden;
+  }
+  
+  /* Ensure containers don't overflow */
+  .container,
+  .max-w-7xl,
+  .max-w-6xl,
+  .max-w-5xl {
+    overflow-x: hidden;
+  }
+}

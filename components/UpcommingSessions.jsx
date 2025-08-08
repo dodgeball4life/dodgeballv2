@@ -246,6 +246,27 @@ const UpcomingSessions = () => {
           position: relative;
         }
 
+        .timeline-wrapper::before,
+        .timeline-wrapper::after {
+          content: '';
+          position: absolute;
+          top: 0;
+          bottom: 32px;
+          width: 40px;
+          z-index: 10;
+          pointer-events: none;
+        }
+
+        .timeline-wrapper::before {
+          left: 0;
+          background: linear-gradient(to right, #F0EEE7, transparent);
+        }
+
+        .timeline-wrapper::after {
+          right: 0;
+          background: linear-gradient(to left, #F0EEE7, transparent);
+        }
+
         .timeline {
           display: flex;
           gap: 1.6rem;
@@ -253,6 +274,8 @@ const UpcomingSessions = () => {
           scroll-snap-type: x mandatory;
           scroll-padding-left: 1rem;
           padding-bottom: 32px;
+          padding-left: 1rem;
+          padding-right: 1rem;
           -webkit-overflow-scrolling: touch;
           scrollbar-width: none;
           -ms-overflow-style: none;
@@ -444,14 +467,22 @@ const UpcomingSessions = () => {
             padding: 2rem 1rem 4rem;
           }
 
+          .timeline-wrapper::before,
+          .timeline-wrapper::after {
+            bottom: 24px;
+            width: 30px;
+          }
+
           .timeline {
             gap: 1.2rem;
             padding-bottom: 24px;
+            padding-left: 1rem;
+            padding-right: 1rem;
           }
 
           .card {
             min-width: 260px;
-            max-width: 90vw;
+            max-width: 85vw;
             padding: 1.8rem 2rem 1.4rem;
             border-radius: 14px;
           }
@@ -466,12 +497,7 @@ const UpcomingSessions = () => {
           }
 
           .scroll-hint {
-            font-size: 0.75rem;
-          }
-
-          .scroll-hint svg {
-            width: 16px;
-            height: 16px;
+            display: none;
           }
         }
       `}</style>

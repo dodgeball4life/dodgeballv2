@@ -13,7 +13,7 @@ export default function ScrollHint() {
 
   return (
     <div
-      className="xs:hidden sm:hidden md:hidden lg:block xl:block"
+      className="hidden sm:block"
       style={{
         position: "fixed",
         bottom: "40px",

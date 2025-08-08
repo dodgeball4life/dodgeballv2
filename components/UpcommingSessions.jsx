@@ -12,6 +12,7 @@ const UpcomingSessions = () => {
   const cardRefs = useRef([]);
   const [sessions, setSessions] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [windowWidth, setWindowWidth] = useState(0);
 
   // Mouse drag state
   const isDragging = useRef(false);
@@ -20,6 +21,15 @@ const UpcomingSessions = () => {
 
   useEffect(() => {
     fetchSessions();
+    
+    // Set initial window width
+    setWindowWidth(window.innerWidth);
+    
+    // Add resize listener
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   const fetchSessions = async () => {
@@ -223,13 +233,25 @@ const UpcomingSessions = () => {
         }
 
         .section-title {
-          text-transform: uppercase;
+          text-transform: none;
           font-weight: 700;
-          font-size: 0.8rem;
-          letter-spacing: 0.08em;
+          font-size: clamp(1.8rem, 4vw, 2.6rem);
+          letter-spacing: normal;
           color: #111111;
           text-align: center;
           margin-bottom: 14px;
+          cursor: default;
+        }
+        
+        .letter {
+          transition: font-weight 0.3s ease;
+          cursor: default;
+        }
+        
+        @media (min-width: 1025px) {
+          .letter:hover {
+            font-weight: 300;
+          }
         }
 
         .subtitle {
@@ -512,7 +534,24 @@ const UpcomingSessions = () => {
         />
         
         <div className="container">
-          <div className="section-title">UPCOMING SESSIONS</div>
+          <div className="section-title">
+            {windowWidth > 1024 ? 
+              "Upcoming Sessions".split("").map((letter, index) => (
+                <span 
+                  key={index} 
+                  className="letter"
+                  style={{ 
+                    display: "inline-block",
+                    width: letter === " " ? "0.5em" : "auto"
+                  }}
+                >
+                  {letter === " " ? "\u00A0" : letter}
+                </span>
+              ))
+             : 
+              "Upcoming Sessions"
+            }
+          </div>
           <p className="subtitle">Swipe or scroll through upcoming games</p>
           
           <div className="timeline-wrapper" role="region" aria-label="Upcoming dodgeball sessions timeline container">

@@ -10,49 +10,63 @@ gsap.registerPlugin(ScrollTrigger);
 
 export default function PricingPlans() {
   const [activeTab, setActiveTab] = useState("adult");
+  const [windowWidth, setWindowWidth] = useState(0);
   const containerRef = useRef(null);
+  const titleRef = useRef(null);
   const adultRef = useRef([]);
   const youthRef = useRef([]);
   const tl = useRef(null);
 
   useEffect(() => {
-    if (!containerRef.current) return;
+    // Set initial window width
+    setWindowWidth(window.innerWidth);
+    
+    // Add resize listener
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
 
-    // Clear previous timeline if any
+    if (!containerRef.current) {
+      return () => window.removeEventListener('resize', handleResize);
+    }
+
+        // Clear previous timeline if any
     if (tl.current) {
       tl.current.kill();
       tl.current = null;
     }
 
-    tl.current = gsap.timeline({
-      scrollTrigger: {
-        trigger: containerRef.current,
-        start: "top 100%",
-        end: "top 0%",
-        scrub: 1.2,
-        toggleActions: "play none none none",
-        // markers: true, // toggle off after testing
-      },
-    });
-
-    tl.current
-      .fromTo(
-        containerRef.current,
-        { opacity: 0, y: 50 },
-        { opacity: 1, y: 0, duration: 1.2, ease: "power3.out" }
-      )
-      .fromTo(
-        activeTab === "adult" ? adultRef.current : youthRef.current,
-        { opacity: 0, y: 40 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.8,
-          stagger: 0.15,
-          ease: "power2.out",
+    const ctx = gsap.context(() => {
+      tl.current = gsap.timeline({
+        scrollTrigger: {
+          trigger: containerRef.current,
+          start: "top 60%",
+          end: "top 30%",
+          scrub: 0.5,
+          toggleActions: "play none none none",
         },
+      });
+
+      tl.current.fromTo(
+        titleRef.current,
+        { y: -50, opacity: 0 },
+        { y: 0, opacity: 1, duration: 1 },
+        "-=1"
+      );
+
+      tl.current.fromTo(
+        activeTab === "adult" ? adultRef.current : youthRef.current,
+        { y: 80, opacity: 0, rotateX: 20 },
+        { y: 0, opacity: 1, rotateX: 0, duration: 1.2, stagger: 0.25 },
         "-=0.8"
       );
+    }, containerRef);
+
+    return () => {
+      ctx.revert();
+      window.removeEventListener('resize', handleResize);
+    };
+      
+      return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   return (
@@ -141,8 +155,23 @@ export default function PricingPlans() {
         className={`${styles.pricingPlan}  relative z-50`}
         ref={containerRef}
       >
-        <div className={`${styles.sectionTitle}  relative z-50`}>
-          TICKETS &amp; MEMBERSHIPS
+        <div className={`${styles.sectionTitle}  relative z-50`} ref={titleRef}>
+          {windowWidth > 1024 ? 
+            "Tickets & Memberships".split("").map((letter, index) => (
+              <span 
+                key={index} 
+                className={styles.letter}
+                style={{ 
+                  display: "inline-block",
+                  width: letter === " " ? "0.5em" : "auto"
+                }}
+              >
+                {letter === " " ? "\u00A0" : letter}
+              </span>
+            ))
+           : 
+            "Tickets & Memberships"
+          }
         </div>
 
         <div className={`${styles.toggle}  relative z-50`}>

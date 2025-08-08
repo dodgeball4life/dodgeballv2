@@ -190,7 +190,20 @@ export default function FaqPage() {
       <div className={styles.container}>
         <div className={styles.header}>
           <div ref={faqTopRef}></div>
-          <h1>Frequently Asked Questions</h1>
+          <h1>
+            {"FAQ".split("").map((letter, index) => (
+              <span 
+                key={index} 
+                className={styles.letter}
+                style={{ 
+                  display: "inline-block",
+                  width: letter === " " ? "0.5em" : "auto"
+                }}
+              >
+                {letter === " " ? "\u00A0" : letter}
+              </span>
+            ))}
+          </h1>
           <p>Everything you might want to know about the dodgeball fun.</p>
         </div>
 

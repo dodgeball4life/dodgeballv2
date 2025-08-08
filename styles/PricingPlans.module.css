@@ -16,13 +16,25 @@
   padding: 40px 20px;
 }
 .sectionTitle {
-  text-transform: uppercase;
+  text-transform: none;
   font-weight: 700;
-  font-size: 0.8rem;
-  letter-spacing: 0.08em;
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
+  letter-spacing: normal;
   color: var(--black);
   text-align: center;
   margin-bottom: 14px;
+  cursor: default;
+}
+
+.letter {
+  transition: font-weight 0.3s ease;
+  cursor: default;
+}
+
+@media (min-width: 1025px) {
+  .letter:hover {
+    font-weight: 300;
+  }
 }
 
 .toggle {

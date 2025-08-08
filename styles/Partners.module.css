@@ -8,13 +8,25 @@
 }
 
 .partnersTitle {
-  font-size: 2.5rem;
-  font-weight: 900;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
+  font-weight: 700;
+  text-transform: none;
+  letter-spacing: normal;
   color: white;
   margin-bottom: 60px;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  cursor: default;
+}
+
+.letter {
+  transition: font-weight 0.3s ease;
+  cursor: default;
+}
+
+@media (min-width: 1025px) {
+  .letter:hover {
+    font-weight: 300;
+  }
 }
 
 .logoRows {

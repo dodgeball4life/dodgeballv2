@@ -37,13 +37,25 @@
 
 .sectionTitle {
   font-family: "Inter", sans-serif;
-  font-weight: 600;
-  text-transform: uppercase;
-  font-size: 14px;
-  letter-spacing: 1.5px;
+  font-weight: 700;
+  text-transform: none;
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
+  letter-spacing: normal;
   color: var(--text);
   padding: 24px 0 10px;
   text-align: center;
+  cursor: default;
+}
+
+.letter {
+  transition: font-weight 0.3s ease;
+  cursor: default;
+}
+
+@media (min-width: 1025px) {
+  .letter:hover {
+    font-weight: 300;
+  }
 }
 
 .form {

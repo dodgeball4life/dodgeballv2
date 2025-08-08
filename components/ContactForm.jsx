@@ -7,6 +7,7 @@ gsap.registerPlugin(ScrollTrigger);
 
 export default function ContactForm() {
   const [submitted, setSubmitted] = useState(false);
+  const [windowWidth, setWindowWidth] = useState(0);
 
   // Refs for main container, form, thank you message
   const containerRef = useRef(null);
@@ -14,7 +15,16 @@ export default function ContactForm() {
   const thankYouRef = useRef(null);
 
   useEffect(() => {
-    if (!containerRef.current) return;
+    // Set initial window width
+    setWindowWidth(window.innerWidth);
+    
+    // Add resize listener
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    
+    const cleanup = () => window.removeEventListener('resize', handleResize);
+
+    if (!containerRef.current) return cleanup;
 
     const ctx = gsap.context(() => {
       // Animate container scale and fade in on scroll
@@ -33,7 +43,10 @@ export default function ContactForm() {
       );
     }, containerRef);
 
-    return () => ctx.revert();
+    return () => {
+      ctx.revert();
+      cleanup();
+    };
   }, []);
 
   // Animate form inputs and submit button on form mount
@@ -171,7 +184,24 @@ export default function ContactForm() {
           <div className={styles.logoHeader}></div>
         </a>
 
-        <div className={styles.sectionTitle}>CONTACT US</div>
+        <div className={styles.sectionTitle}>
+          {windowWidth > 1024 ? 
+            "Contact Us".split("").map((letter, index) => (
+              <span 
+                key={index} 
+                className={styles.letter}
+                style={{ 
+                  display: "inline-block",
+                  width: letter === " " ? "0.5em" : "auto"
+                }}
+              >
+                {letter === " " ? "\u00A0" : letter}
+              </span>
+            ))
+           : 
+            "Contact Us"
+          }
+        </div>
 
         {!submitted ? (
           <form

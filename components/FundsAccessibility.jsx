@@ -164,7 +164,18 @@ export default function FundsAccessibility() {
       />
       <div className={`${styles.container}  relative z-50`}>
         <div className={styles.sectionTitle} ref={titleRef}>
-          Funds & Accessibility
+          {"Funds & Accessibility".split("").map((letter, index) => (
+            <span 
+              key={index} 
+              className={styles.letter}
+              style={{ 
+                display: "inline-block",
+                width: letter === " " ? "0.5em" : "auto"
+              }}
+            >
+              {letter === " " ? "\u00A0" : letter}
+            </span>
+          ))}
         </div>
 
         <div className={`${styles.plansWrapper} relative z-60`}>

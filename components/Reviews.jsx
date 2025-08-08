@@ -309,7 +309,24 @@ export default function Reviews() {
         <div className="px-4">
           <div style={styles.stars}>★★★★★</div>
           <div style={styles.subheading}>What others say</div>
-          <div style={styles.title}>Experiences from our Dodgers</div>
+          <div style={styles.title}>
+            {"Experiences from our Dodgers".split("").map((letter, index) => (
+              <span 
+                key={index} 
+                style={{
+                  display: "inline-block",
+                  width: letter === " " ? "0.5em" : "auto",
+                  fontWeight: 700,
+                  transition: "font-weight 0.3s ease",
+                  cursor: "default"
+                }}
+                onMouseEnter={(e) => e.target.style.fontWeight = 300}
+                onMouseLeave={(e) => e.target.style.fontWeight = 700}
+              >
+                {letter === " " ? "\u00A0" : letter}
+              </span>
+            ))}
+          </div>
           <div style={styles.subtitle}>
             A sport that <strong style={{ color: "white" }}>connects</strong>. A
             community that{" "}
@@ -490,10 +507,12 @@ const styles = {
     marginBottom: 6,
   },
   title: {
-    fontSize: "2rem",
+    fontSize: "2.6rem",
     fontWeight: 700,
     marginBottom: 10,
     color: "white",
+    transition: "all 0.5s ease",
+    cursor: "default",
   },
   subtitle: {
     fontSize: "1rem",

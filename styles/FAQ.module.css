@@ -25,9 +25,21 @@
 }
 
 .header h1 {
-  font-size: 2.6rem;
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
   font-weight: 700;
   margin-bottom: 0.5rem;
+  cursor: default;
+}
+
+.letter {
+  transition: font-weight 0.3s ease;
+  cursor: default;
+}
+
+@media (min-width: 1025px) {
+  .letter:hover {
+    font-weight: 300;
+  }
 }
 
 .header p {

@@ -7,7 +7,7 @@
   top: 0;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 100002;
+  z-index: 50;
   /* Performance optimizations */
   will-change: transform, opacity;
   backface-visibility: hidden;
@@ -28,7 +28,7 @@
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
-  z-index: 100002;
+  z-index: 51;
 }
 
 @media (min-width: 768px) and (max-width: 1024px) {
@@ -227,16 +227,27 @@
 }
 
 .menuContentContainer {
-  overflow-y: auto;
-  overflow-x: hidden;
+  overflow: hidden;
+  backdrop-filter: blur(40px);
+  -webkit-backdrop-filter: blur(40px);
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  overscroll-behavior: none;
 }
 
 .moreMenuContainer {
   margin-bottom: 0;
+  padding-left: 0;
+  margin-top: 0;
 }
 
 .moreMenuItem {
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
 }
 
 @media (max-width: 767px) {
@@ -244,6 +255,12 @@
     margin-bottom: 0.25rem;
   }
   
+  .moreMenuLink {
+    font-size: 1rem !important;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
   .moreMenuLink {
     font-size: 1.25rem !important;
   }
@@ -254,13 +271,13 @@
   top: 0;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 100003;
+  z-index: 100000;
 }
 
 .nav.menuOpen {
   background: #141414;
   color: #F0EEE7;
-  z-index: 100003;
+  z-index: 100001;
 }
 
 .navHidden {

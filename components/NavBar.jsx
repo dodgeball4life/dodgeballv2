@@ -74,13 +74,13 @@ const NavBar = () => {
     { label: "Sessions", href: "/#sessions" },
     { label: "Clinics", href: "/clinics", external: true },
     { label: "Memberships", href: "/#memberships" },
+    { label: "Youth", href: "/youth", external: true },
   ];
 
   const moreLinks = [
-    { label: "Contact", href: "/#contact" },
     { label: "Funds", href: "/#funds" },
-    { label: "Youth", href: "/youth", external: true },
     { label: "FAQ", href: "/#faq" },
+    { label: "Contact", href: "/#contact" },
   ];
 
   const helpLinks = [
@@ -753,7 +753,8 @@ const NavBar = () => {
                       <Link
                         href={link.href}
                         className={`block py-3 px-8 ${
-                          ['Funds', 'Youth', 'FAQ'].includes(link.label) 
+                          link.label === 'Youth' ? 'text-white/90 hover:text-white' :
+                          ['Funds', 'FAQ'].includes(link.label) 
                             ? 'text-white/40 hover:text-white/65' 
                             : 'text-white/90 hover:text-white'
                         } text-[clamp(2.5rem,6vw,4rem)] font-thin hover:font-bold tracking-tight leading-[0.9] transition-all duration-500`}
@@ -773,7 +774,8 @@ const NavBar = () => {
                           }
                         }}
                         className={`block py-3 px-8 ${
-                          ['Funds', 'Youth', 'FAQ'].includes(link.label) 
+                          link.label === 'Youth' ? 'text-white/90 hover:text-white' :
+                          ['Funds', 'FAQ'].includes(link.label) 
                             ? 'text-white/40 hover:text-white/65' 
                             : 'text-white/90 hover:text-white'
                         } text-[clamp(2.5rem,6vw,4rem)] font-thin hover:font-bold tracking-tight leading-[0.9] transition-all duration-500`}
@@ -842,8 +844,8 @@ const NavBar = () => {
                           <Link
                             href={moreLink.href}
                             className={`block py-2 px-6 ${
-                              ['Funds', 'Youth', 'FAQ'].includes(moreLink.label) 
-                                ? 'text-white/35 hover:text-white/60' 
+                              ['FAQ', 'Contact', 'Funds'].includes(moreLink.label)
+                                ? 'text-white/35 hover:text-white/60'
                                 : 'text-white/70 hover:text-white/90'
                             } text-[clamp(1.2rem,3.5vw,1.8rem)] font-thin hover:font-bold tracking-tight leading-[1.2] transition-all duration-500`}
                             onClick={() => closeMenu()}
@@ -862,8 +864,8 @@ const NavBar = () => {
                               }
                             }}
                             className={`block py-2 px-6 ${
-                              ['Funds', 'Youth', 'FAQ'].includes(moreLink.label) 
-                                ? 'text-white/35 hover:text-white/60' 
+                              ['FAQ', 'Contact', 'Funds'].includes(moreLink.label)
+                                ? 'text-white/35 hover:text-white/60'
                                 : 'text-white/70 hover:text-white/90'
                             } text-[clamp(1.2rem,3.5vw,1.8rem)] font-thin hover:font-bold tracking-tight leading-[1.2] transition-all duration-500`}
                             style={{ fontFamily: 'var(--font-inter), Inter, -apple-system, BlinkMacSystemFont, sans-serif' }}
@@ -905,11 +907,7 @@ const NavBar = () => {
               ))}
             </div>
 
-            {/* Ambient Background Elements */}
-            <div className="absolute inset-0 pointer-events-none">
-              <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-[#F0EEE7]/5 rounded-full blur-3xl" />
-              <div className="absolute bottom-1/4 right-1/4 w-48 h-48 bg-[#F0EEE7]/3 rounded-full blur-3xl" />
-            </div>
+            {/* Ambient Background Elements removed for solid background */}
           </div>
         </div>
       </div>

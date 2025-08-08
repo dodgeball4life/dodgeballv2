@@ -214,7 +214,7 @@ const Clinics = () => {
         <div className={styles.wrapper}>
           <section className={styles.section}>
             <div className={styles.content}>
-              <div className={styles.imageBox}>
+              <div className={`${styles.imageBox} ${showForm ? styles.imageBoxWithForm : ''}`}>
                 {!showForm && (
                   <>
                     <img

@@ -47,6 +47,10 @@
   justify-content: center;
 }
 
+.imageBoxWithForm {
+  border: 1px solid #ddd;
+}
+
 .photo,
 .ampersand,
 .cta {

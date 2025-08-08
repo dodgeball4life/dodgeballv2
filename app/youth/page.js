@@ -156,15 +156,14 @@ export default function YouthPage() {
         {/* ✅ Canvas with working opacity */}
          <canvas
   ref={canvasRef}
-  className={`fixed top-0 left-0 w-full h-full z-40 pointer-events-none transition-opacity duration-700 ease-in-out ${
+  className={`fixed top-8 left-0 w-full h-full z-40 pointer-events-none transition-opacity duration-700 ease-in-out ${
     showCanvas ? "opacity-[1]" : "opacity-0"
   }`}
   style={{ mixBlendMode: "multiply" }}
 />
         <NavBar />
-        <section
-          className={`${styles.intro} ${!showInfo ? "" : styles.hidden}`}
-        >
+        {!showInfo && (
+        <section className={styles.intro}>
           <h1 className={styles.word} ref={(el) => (wordsRef.current[0] = el)}>
             Dodgeball
           </h1>
@@ -185,57 +184,62 @@ export default function YouthPage() {
             Discover More
           </button>
         </section>
+        )}
 
-        <section
-          className={`${styles.info} ${showInfo ? styles.active : ""}`}
-          hidden={!showInfo}
-        >
-          <h2>Why Parents Choose Our Program</h2>
-          <p>
-            Youth dodgeball in Groningen is about more than just fun. It's a
-            space for kids to move, play, and grow in a safe and inspiring
-            environment.
-          </p>
+        {showInfo && (
+        <section className={`${styles.info} ${styles.active}`}>
+          <div className={styles.infoContainer}>
+            <h2>Why Parents Choose Our Program</h2>
+            <p>
+              Youth dodgeball in Groningen is about more than just fun. It's a
+              space for kids to move, play, and grow in a safe and inspiring
+              environment.
+            </p>
 
-          <div className={styles.features}>
-            {[
-              [
-                "Age-specific Groups",
-                "Sessions tailored for ages 4–12 & 12–16, so every child feels included and challenged.",
-              ],
-              [
-                "Teamwork & Social Play",
-                "Every session is built around trust, movement, and fun. No pressure, just joy.",
-              ],
-              [
-                "Professional Trainers",
-                "Our coaches know how to engage, motivate, and support young athletes.",
-              ],
-              [
-                "Clean Indoor Facility",
-                "Top equipment, safe floors, and a clean environment, so you can relax while they play.",
-              ],
-              [
-                "40-Week Program",
-                "Weekly dodgeball throughout the year, with breaks during holidays.",
-              ],
-              [
-                "Parent Viewing Area",
-                "Our location includes a spot for parents to watch.",
-              ],
-            ].map(([title, desc], i) => (
-              <div className={styles.feature} key={i}>
-                <h3>{title}</h3>
-                <p>{desc}</p>
-              </div>
-            ))}
-          </div>
+            <div className={styles.features}>
+              {[
+                [
+                  "Age-specific Groups",
+                  "Sessions tailored for ages 4–12 & 12–16, so every child feels included and challenged.",
+                ],
+                [
+                  "Teamwork & Social Play",
+                  "Every session is built around trust, movement, and fun. No pressure, just joy.",
+                ],
+                [
+                  "Professional Trainers",
+                  "Our coaches know how to engage, motivate, and support young athletes.",
+                ],
+                [
+                  "Clean Indoor Facility",
+                  "Top equipment, safe floors, and a clean environment, so you can relax while they play.",
+                ],
+                [
+                  "40-Week Program",
+                  "Weekly dodgeball throughout the year, with breaks during holidays.",
+                ],
+                [
+                  "Parent Viewing Area",
+                  "Our location includes a spot for parents to watch.",
+                ],
+              ].map(([title, desc], i) => (
+                <div className={styles.feature} key={i}>
+                  <h3>{title}</h3>
+                  <p>{desc}</p>
+                </div>
+              ))}
+            </div>
 
-          <div className={styles.buttonGroup}>
-            <button onClick={() => setShowInfo(false)}>Back</button>
-            <button onClick={openModal}>Join Waiting List</button>
+            <div className={styles.buttonGroup}>
+              <button onClick={() => {
+                setShowInfo(false);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}>Back</button>
+              <button onClick={openModal}>Join Waiting List</button>
+            </div>
           </div>
         </section>
+        )}
 
         <div
           className={`${styles.modalOverlay} ${modalOpen ? styles.active : ""}`}

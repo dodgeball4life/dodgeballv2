@@ -242,7 +242,7 @@ body {
   display: none;
   justify-content: center;
   align-items: center;
-  z-index: 20;
+  z-index: 9999;
 }
 
 .modalOverlay.active {
@@ -257,6 +257,111 @@ body {
   width: 90%;
   position: relative;
   text-align: left;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.modalContent::-webkit-scrollbar {
+  width: 6px;
+}
+
+.modalContent::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.modalContent::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 3px;
+}
+
+.modalContent::-webkit-scrollbar-thumb:hover {
+  background: #999;
+}
+
+.modalDescription {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 1.5rem;
+  line-height: 1.4;
+  text-align: center;
+}
+
+.modalInfo {
+  margin: 1.5rem 0;
+  padding: 1rem;
+  background: #f9f9f9;
+  border-radius: 0.5rem;
+  border-left: 3px solid var(--black);
+}
+
+.modalInfo h4 {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0 0 0.75rem 0;
+  color: var(--black);
+}
+
+.modalInfo ul {
+  margin: 0 0 1rem 0;
+  padding-left: 1.25rem;
+}
+
+.modalInfo li {
+  font-size: 0.85rem;
+  line-height: 1.4;
+  margin-bottom: 0.25rem;
+  color: #555;
+}
+
+.modalInfo p {
+  font-size: 0.85rem;
+  line-height: 1.4;
+  margin: 0 0 1rem 0;
+  color: #555;
+}
+
+.modalInfo p:last-child {
+  margin-bottom: 0;
+}
+
+.modalLink {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  background: #f0f8ff;
+  border-radius: 0.5rem;
+  text-align: center;
+  border: 1px solid #ddeeff;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.modalLink.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.modalLink p {
+  margin: 0 0 0.5rem 0;
+  font-size: 0.85rem;
+  color: #444;
+}
+
+.facilitiesLink {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  background: var(--black);
+  color: var(--white);
+  text-decoration: none;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+}
+
+.facilitiesLink:hover {
+  background: #333;
 }
 
 .modalContent h3 {

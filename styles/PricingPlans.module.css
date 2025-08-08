@@ -131,7 +131,7 @@
 
 .popularTag {
   position: absolute;
-  top: -10px;
+  top: -15px;
   left: 50%;
   transform: translateX(-50%);
   background: var(--accent);
@@ -189,9 +189,9 @@
     scroll-behavior: smooth;
     scroll-snap-type: x mandatory;
     -webkit-overflow-scrolling: touch;
-    /* Center first and last cards */
-    padding-left: calc(50vw - 150px); /* Half screen minus half card width */
-    padding-right: calc(50vw - 150px);
+    /* Show more of next card - adjusted for modern phones */
+    padding-left: calc(50vw - 120px);
+    padding-right: calc(50vw - 180px);
   }
   
   .plans::-webkit-scrollbar {
@@ -213,9 +213,9 @@
 
 @media (max-width: 640px) {
   .plans {
-    /* Adjust for smaller mobile screens */
-    padding-left: calc(50vw - 140px); /* Half screen minus half card width */
-    padding-right: calc(50vw - 140px);
+    /* Adjust for smaller mobile screens - show more of next card */
+    padding-left: calc(50vw - 110px);
+    padding-right: calc(50vw - 170px);
     padding-top: 25px; /* Slightly less top padding on mobile */
   }
   

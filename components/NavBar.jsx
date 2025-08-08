@@ -17,6 +17,7 @@ const NavBar = () => {
   const [visible, setVisible] = useState(true);
   const [isScrolled, setIsScrolled] = useState(false);
   const [forceVisible, setForceVisible] = useState(false); // Force navbar to be visible when pill is clicked
+  const [isMobile, setIsMobile] = useState(false);
   const lastScroll = useRef(0);
 
   // Ensure GSAP is properly loaded
@@ -31,6 +32,20 @@ const NavBar = () => {
     };
     
     checkGSAP();
+  }, []);
+
+  // Detect if device is mobile/touch-enabled
+  useEffect(() => {
+    const checkMobile = () => {
+      const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+      const isSmallScreen = window.innerWidth <= 768;
+      setIsMobile(isTouchDevice || isSmallScreen);
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
   // Scroll visibility effect
@@ -81,6 +96,18 @@ const NavBar = () => {
       console.error('GSAP operation failed:', error);
       return null;
     }
+  };
+
+  // Reset GSAP properties on menu links to prevent state persistence
+  const resetLinkStyles = () => {
+    safeGSAP(() => {
+      const allLinks = [...linkRefs.current, ...moreItemRefs.current].filter(link => link !== null);
+      if (allLinks.length > 0) {
+        gsap.set(allLinks, { 
+          clearProps: "all" // Clear all GSAP-set properties
+        });
+      }
+    });
   };
 
   const coverRef = useRef(null);
@@ -182,6 +209,9 @@ const NavBar = () => {
       return;
     }
 
+    // Reset any lingering GSAP properties before starting animation
+    resetLinkStyles();
+
     safeGSAP(() => {
       gsap.killTweensOf(linkRefs.current);
       gsap.set(linkRefs.current, { yPercent: 100, opacity: 1 });
@@ -214,6 +244,7 @@ const NavBar = () => {
           linkRefs.current,
           {
             yPercent: 0,
+            opacity: 1, // Explicitly set opacity to 1
             duration: 0.6,
             ease: "power3.out",
             stagger: 0.12,
@@ -305,6 +336,9 @@ const NavBar = () => {
           document.body.style.overflow = "unset";
           document.body.style.position = "static";
           document.body.style.width = "auto";
+          
+          // Reset GSAP properties after closing to prevent state persistence
+          resetLinkStyles();
         });
 
       return tl;
@@ -317,6 +351,8 @@ const NavBar = () => {
       document.body.style.overflow = "unset";
       document.body.style.position = "static";
       document.body.style.width = "auto";
+      // Also reset styles in fallback
+      resetLinkStyles();
     }
   };
 
@@ -502,6 +538,15 @@ const NavBar = () => {
     setTimeout(() => ripple.remove(), 600);
   };
 
+  // Handle help menu click for mobile devices
+  const handleHelpClick = (e) => {
+    if (isMobile) {
+      e.preventDefault();
+      e.stopPropagation();
+      setHelpMenuOpen(!helpMenuOpen);
+    }
+  };
+
   // Handle wheel scrolling for menu content only
   useEffect(() => {
     if (menuOpen) {
@@ -542,6 +587,36 @@ const NavBar = () => {
     }
   }, [menuOpen, moreMenuOpen]);
 
+  // Close help menu when clicking outside on mobile
+  useEffect(() => {
+    if (isMobile && helpMenuOpen) {
+      const handleClickOutside = (e) => {
+        const helpElement = document.getElementById('helpMenu');
+        const helpButton = e.target.closest('.help-button');
+        
+        if (helpElement && !helpElement.contains(e.target) && !helpButton) {
+          setHelpMenuOpen(false);
+        }
+      };
+
+      document.addEventListener('click', handleClickOutside);
+      return () => document.removeEventListener('click', handleClickOutside);
+    }
+  }, [isMobile, helpMenuOpen]);
+
+  // Reset GSAP properties on component mount and route changes
+  useEffect(() => {
+    // Reset GSAP properties when component mounts
+    resetLinkStyles();
+  }, []);
+
+  // Reset GSAP properties when gsapReady state changes
+  useEffect(() => {
+    if (gsapReady) {
+      resetLinkStyles();
+    }
+  }, [gsapReady]);
+
   // Simplified hash navigation handler
   useEffect(() => {
     const scrollToSection = (sectionId) => {
@@ -549,11 +624,14 @@ const NavBar = () => {
       const target = document.getElementById(sectionId);
       if (target) {
         console.log('Found target element:', target);
-        console.log('Target offsetTop:', target.offsetTop - 1000);
+        console.log('Target offsetTop:', target.offsetTop);
         
-        // Scroll directly to the section
+        // Scroll directly to the section with consistent offset
+        const navbarHeight = 100; // Approximate navbar height
+        const targetOffset = target.offsetTop - navbarHeight;
+        
         window.scrollTo({
-          top: target.offsetTop + 900,
+          top: Math.max(0, targetOffset + 900), // Ensure we don't scroll to negative position
           behavior: "smooth"
         });
         return true;
@@ -567,17 +645,29 @@ const NavBar = () => {
       const hash = window.location.hash;
       if (hash) {
         const sectionId = hash.substring(1);
+        console.log('=== HASH NAVIGATION START ===');
         console.log('Navigating to section:', sectionId);
+        console.log('Current pathname:', window.location.pathname);
         
         // Try immediate scroll
         if (!scrollToSection(sectionId)) {
-          // If not found, wait a bit and try again (only once)
+          console.log('First attempt failed, retrying...');
+          // If not found, wait a bit and try again (for cross-page navigation)
           setTimeout(() => {
+            console.log('Second attempt...');
             if (!scrollToSection(sectionId)) {
-              console.log('Section not found:', sectionId);
+              console.log('Second attempt failed, trying third attempt...');
+              // Try one more time with longer delay for slower loading
+              setTimeout(() => {
+                console.log('Third attempt...');
+                scrollToSection(sectionId);
+              }, 1000);
             }
           }, 500);
+        } else {
+          console.log('First attempt succeeded!');
         }
+        console.log('=== HASH NAVIGATION END ===');
       }
     };
 
@@ -592,24 +682,89 @@ const NavBar = () => {
       }
     };
 
-    // Handle hash on initial page load
-    const initialTimer = setTimeout(handleHashNavigation, 200);
+    // Handle hash on initial page load with multiple attempts for cross-page navigation
+    const initialTimer = setTimeout(() => {
+      console.log('Initial hash navigation attempt - pathname:', window.location.pathname);
+      if (window.location.pathname === '/' && window.location.hash) {
+        console.log('On home page with hash, attempting navigation');
+        handleHashNavigation();
+      }
+    }, 300);
+    
+    // Additional attempts for cross-page navigation - more aggressive timing
+    const secondTimer = setTimeout(() => {
+      if (window.location.pathname === '/' && window.location.hash) {
+        console.log('Secondary initial hash navigation attempt');
+        handleHashNavigation();
+      }
+    }, 1000);
+    
+    const thirdTimer = setTimeout(() => {
+      if (window.location.pathname === '/' && window.location.hash) {
+        console.log('Third initial hash navigation attempt');
+        handleHashNavigation();
+      }
+    }, 2500);
+    
+    const fourthTimer = setTimeout(() => {
+      if (window.location.pathname === '/' && window.location.hash) {
+        console.log('Fourth initial hash navigation attempt');
+        handleHashNavigation();
+      }
+    }, 4000);
 
     // Listen for hash changes and navigation
     window.addEventListener('hashchange', handleHashNavigation);
     window.addEventListener('popstate', handleHashNavigation);
     
-    // Use router events if available
-    if (router && router.events) {
-      router.events.on('routeChangeComplete', handleRouteChange);
+    // Use MutationObserver to detect when sections are added to the DOM
+    let observer = null;
+    if (window.location.pathname === '/' && window.location.hash) {
+      console.log('Setting up DOM observer for hash navigation');
+      observer = new MutationObserver((mutations) => {
+        const hash = window.location.hash;
+        if (hash) {
+          const sectionId = hash.substring(1);
+          const target = document.getElementById(sectionId);
+          if (target) {
+            console.log('DOM observer found target section:', sectionId);
+            observer.disconnect(); // Stop observing once we find the target
+            setTimeout(() => {
+              handleHashNavigation();
+            }, 100);
+          }
+        }
+      });
+      
+      // Start observing
+      observer.observe(document.body, {
+        childList: true,
+        subtree: true
+      });
+      
+      // Stop observing after 10 seconds to prevent memory leaks
+      setTimeout(() => {
+        if (observer) {
+          observer.disconnect();
+          console.log('DOM observer stopped after timeout');
+        }
+      }, 10000);
     }
+    
+
+
+    // Note: router.events is not available in App Router (next/navigation)
+    // Hash navigation is handled by the initial timers and hashchange events
     
     return () => {
       clearTimeout(initialTimer);
+      clearTimeout(secondTimer);
+      clearTimeout(thirdTimer);
+      clearTimeout(fourthTimer);
       window.removeEventListener('hashchange', handleHashNavigation);
       window.removeEventListener('popstate', handleHashNavigation);
-      if (router && router.events) {
-        router.events.off('routeChangeComplete', handleRouteChange);
+      if (observer) {
+        observer.disconnect();
       }
     };
   }, [router, menuOpen]);
@@ -623,36 +778,50 @@ const NavBar = () => {
       console.log('Target section:', hash);
       console.log('Current path:', window.location.pathname);
       
-      // Find the target element immediately
-      const target = document.getElementById(hash);
-      if (!target) {
-        console.log('ERROR: Section not found:', hash);
-        return;
-      }
-      
-      console.log('Found target element:', target);
-      console.log('Target position:', target.offsetTop);
-      
-      // Close menu
-      closeMenuFn();
-      
       // Navigate directly
       if (window.location.pathname !== "/") {
         console.log('Cross-page navigation to:', `/#${hash}`);
+        // Close menu first for cross-page navigation
+        closeMenuFn();
+        // For cross-page navigation, just navigate to the new URL
+        // The hash navigation handler will take care of scrolling after page loads
         router.push(`/#${hash}`);
       } else {
         console.log('Same-page navigation to section');
-        // Set hash and scroll immediately
+        
+        // For same-page navigation, find the target element
+        const target = document.getElementById(hash);
+        if (!target) {
+          console.log('ERROR: Section not found:', hash);
+          console.log('Available elements with IDs:', Array.from(document.querySelectorAll('[id]')).map(el => el.id));
+          return;
+        }
+        
+        console.log('Found target element:', target);
+        console.log('Target position:', target.offsetTop);
+        
+        // Set hash first
         window.location.hash = hash;
         
-        // Scroll to section with a slight delay for menu closing
+        // Close menu and scroll to section
+        closeMenuFn();
+        
+        // Scroll to section with delay for menu closing
         setTimeout(() => {
-          console.log('Scrolling to position:', target.offsetTop);
-          window.scrollTo({
-            top: target.offsetTop,
-            behavior: "smooth"
-          });
-        }, 300); // Longer delay to ensure menu is closed
+          // Re-check target exists and get fresh position
+          const freshTarget = document.getElementById(hash);
+          if (freshTarget) {
+            // Calculate offset to account for navbar and padding
+            const navbarHeight = 100; // Approximate navbar height
+            const targetOffset = freshTarget.offsetTop - navbarHeight;
+            console.log('Scrolling to fresh position:', targetOffset);
+            
+            window.scrollTo({
+              top: Math.max(0, targetOffset), // Ensure we don't scroll to negative position
+              behavior: "smooth"
+            });
+          }
+        }, 500); // Longer delay to ensure menu is fully closed
       }
       
       console.log('=== NAVIGATION END ===');
@@ -675,7 +844,7 @@ const NavBar = () => {
       >
         <nav className={`${styles.nav} ${menuOpen ? styles.menuOpen : ''}`}>
           <div className={styles.logo}>
-            <a href="https://www.gronsdodgeball.nl" target="_blank">
+            <Link href="/">
               <img 
                 src="/assets/logos/gronsdodgeball.svg" 
                 alt="Gron's Dodgeball" 
@@ -686,15 +855,17 @@ const NavBar = () => {
                 alt="GD" 
                 className={styles.logoMobile}
               />
-            </a>
+            </Link>
           </div>
           <div className={styles.right}>
             <div className={styles.helpWrapper}>
               <div className={styles.helpArea}>
                 <div 
-                  className={styles.help}
-                  onMouseEnter={() => setHelpMenuOpen(true)}
-                  onMouseLeave={() => setHelpMenuOpen(false)}
+                  className={`${styles.help} help-button`}
+                  onMouseEnter={() => !isMobile && setHelpMenuOpen(true)}
+                  onMouseLeave={() => !isMobile && setHelpMenuOpen(false)}
+                  onClick={handleHelpClick}
+                  style={{ cursor: isMobile ? 'pointer' : 'default' }}
                 >
                   Help
                   <span className={styles.arrow} aria-hidden="true">
@@ -705,14 +876,14 @@ const NavBar = () => {
                 </div>
                 <div 
                   className={styles.helpHoverArea}
-                  onMouseEnter={() => setHelpMenuOpen(true)}
-                  onMouseLeave={() => setHelpMenuOpen(false)}
+                  onMouseEnter={() => !isMobile && setHelpMenuOpen(true)}
+                  onMouseLeave={() => !isMobile && setHelpMenuOpen(false)}
                 ></div>
                 <div 
                   className={styles.helpMenu} 
                   id="helpMenu"
-                  onMouseEnter={() => setHelpMenuOpen(true)}
-                  onMouseLeave={() => setHelpMenuOpen(false)}
+                  onMouseEnter={() => !isMobile && setHelpMenuOpen(true)}
+                  onMouseLeave={() => !isMobile && setHelpMenuOpen(false)}
                   style={{ display: helpMenuOpen ? 'flex' : 'none' }}
                 >
                   {helpLinks.map((link, index) => (
@@ -914,7 +1085,8 @@ const NavBar = () => {
                       <Link
                         href={link.href}
                         ref={(el) => (linkRefs.current[index] = el)}
-                        className="main-menu-link text-3xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-[85px] hover:pl-6 transition-all duration-600 leading-none font-bebas-neue font-bold block w-fit"
+                        className="main-menu-link text-3xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl hover:pl-6 transition-all duration-600 leading-none font-bebas-neue font-bold block w-fit"
+                        style={{ color: '#000000' }} // Explicit black color
                         onClick={() => {
                           setTimeout(() => {
                             closeMenu();
@@ -942,7 +1114,8 @@ const NavBar = () => {
                             handleSectionNavigation(link.href);
                           }
                         }}
-                        className="main-menu-link text-3xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-[85px] leading-none hover:pl-6 transition-all duration-600 block w-fit font-bebas-neue font-bold"
+                        className="main-menu-link text-3xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl leading-none hover:pl-6 transition-all duration-600 block w-fit font-bebas-neue font-bold"
+                        style={{ color: '#000000' }} // Explicit black color
                       >
                         {link.label}
                         <div
@@ -968,7 +1141,8 @@ const NavBar = () => {
                 >
                   <div
                     ref={(el) => (linkRefs.current[3] = el)}
-                    className="main-menu-link text-3xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-[85px] leading-none transition-all duration-600 block w-fit font-bebas-neue font-bold flex items-center gap-2 select-none"
+                    className="main-menu-link text-3xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl leading-none transition-all duration-600 block w-fit font-bebas-neue font-bold flex items-center gap-2 select-none"
+                    style={{ color: '#000000' }} // Explicit black color
                   >
                     More
                     <span className="text-xl sm:text-xl md:text-2xl lg:text-4xl font-normal transition-all duration-300">
@@ -995,7 +1169,8 @@ const NavBar = () => {
                           <Link
                             href={moreLink.href}
                             ref={(el) => (moreItemRefs.current[moreIndex] = el)}
-                            className={`${styles.moreMenuLink} text-lg sm:text-xl md:text-2xl lg:text-4xl xl:text-[85px] leading-none hover:pl-6 transition-all duration-600 font-bebas-neue font-bold block w-fit text-black`}
+                            className={`${styles.moreMenuLink} text-lg sm:text-xl md:text-2xl lg:text-4xl xl:text-5xl leading-none hover:pl-6 transition-all duration-600 font-bebas-neue font-bold block w-fit text-black`}
+                            style={{ color: '#000000' }} // Explicit black color
                             onClick={() => {
                               closeMenu();
                               closeMoreMenu();
@@ -1030,7 +1205,8 @@ const NavBar = () => {
                                 closeMoreMenu();
                               }
                             }}
-                            className={`${styles.moreMenuLink} text-lg sm:text-xl md:text-2xl lg:text-4xl xl:text-[85px] leading-none hover:pl-6 transition-all duration-600 font-bebas-neue font-bold block w-fit`}
+                            className={`${styles.moreMenuLink} text-lg sm:text-xl md:text-2xl lg:text-4xl xl:text-5xl leading-none hover:pl-6 transition-all duration-600 font-bebas-neue font-bold block w-fit`}
+                            style={{ color: '#000000' }} // Explicit black color
                           >
                             {moreLink.label}
                             <div
@@ -1067,7 +1243,8 @@ const NavBar = () => {
                         handleSectionNavigation(mainLinks[3].href);
                       }
                     }}
-                    className="main-menu-link text-3xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-[85px] leading-none hover:pl-6 transition-all duration-600 block w-fit font-bebas-neue font-bold"
+                    className="main-menu-link text-3xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl leading-none hover:pl-6 transition-all duration-600 block w-fit font-bebas-neue font-bold"
+                    style={{ color: '#000000' }} // Explicit black color
                   >
                     {mainLinks[3].label}
                     <div
@@ -1084,7 +1261,7 @@ const NavBar = () => {
             </div>
 
             {/* Contact Section */}
-            <div className="flex flex-col items-start md:items-end gap-4 flex-1 mt-8 md:mt-0">
+            <div className="flex flex-col items-start md:items-end gap-2 flex-1 mt-8 md:mt-0">
               <a
                 href="mailto:hello@hello.com"
                 ref={(el) => (contactItemRefs.current[0] = el)}

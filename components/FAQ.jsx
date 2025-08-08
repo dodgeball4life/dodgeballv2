@@ -184,7 +184,7 @@ export default function FaqPage() {
         alt="Hero Background"
         width={20}
         height={20}
-        className="absolute top-[20%] 2xl:left-[20%] left-[15%] size-40 xl:block hidden"
+        className={`absolute ${showAll ? 'top-[6%]' : 'top-[20%]'} 2xl:left-[20%] left-[15%] size-40 xl:block hidden`}
       />
     
       <div className={styles.container}>

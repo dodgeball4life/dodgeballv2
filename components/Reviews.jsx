@@ -46,15 +46,35 @@ const reviews = [
   },
 ];
 
-const ReviewCard = ({ name, text }) => (
-  <div style={styles.card}>
-    <p style={styles.cardText}>“{text}”</p>
-    <div style={styles.cardFooter}>
-      <strong style={styles.cardFooterStrong}>{name}</strong>
-      <span style={styles.cardFooterSpan}>Groningen</span>
+const ReviewCard = ({ name, text }) => {
+  const [windowWidth, setWindowWidth] = useState(0);
+  
+  useEffect(() => {
+    setWindowWidth(window.innerWidth);
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+  
+  const isMobile = windowWidth <= 768;
+  
+  return (
+    <div style={{
+      ...styles.card,
+      width: isMobile ? "calc(100vw - 40px)" : "auto",
+      maxWidth: isMobile ? "none" : 400,
+      minWidth: isMobile ? "auto" : 240,
+    }}>
+      <div style={styles.cardTextContainer}>
+        <p style={styles.cardText}>"{text}"</p>
+      </div>
+      <div style={styles.cardFooter}>
+        <strong style={styles.cardFooterStrong}>{name}</strong>
+        <span style={styles.cardFooterSpan}>Groningen</span>
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 /* const WriteReviewCard = () => (
   <div style={{ ...styles.card, background: "#fefaf1", border: "none" }}>
@@ -70,6 +90,16 @@ const WriteReviewCard = () => {
   const [step, setStep] = useState("initial");
   const [name, setName] = useState("");
   const [review, setReview] = useState("");
+  const [windowWidth, setWindowWidth] = useState(0);
+
+  useEffect(() => {
+    setWindowWidth(window.innerWidth);
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  const isMobile = windowWidth <= 768;
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -79,14 +109,17 @@ const WriteReviewCard = () => {
   };
 
   return (
-    <div
-      className="bg-[#f0ede4] rounded-2xl p-4 w-72 text-black"
-      style={{ ...styles.card, background: "#fefaf1", border: "none" }}
-    >
+    <div style={{
+      ...styles.card,
+      height: step === "form" ? 220 : 160,
+      width: isMobile ? "calc(100vw - 40px)" : "auto",
+      maxWidth: isMobile ? "none" : 400,
+      minWidth: isMobile ? "auto" : 240,
+    }}>
       {step === "initial" && (
-        <div className="flex flex-col items-start">
-          <p className="mb-4 font-medium">
-            Want to share your experience? <br />
+        <div style={styles.writeCardContent}>
+          <p style={styles.cardText}>
+            <strong>Want to share your experience?</strong> <br />
             We'd love to hear from you!
           </p>
           <button onClick={() => setStep("form")} style={styles.writeButton}>
@@ -96,25 +129,25 @@ const WriteReviewCard = () => {
       )}
 
       {step === "form" && (
-        <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-          <h3 className="text-lg font-semibold">Add your experience</h3>
+        <form onSubmit={handleSubmit} style={styles.formContent}>
+          <h3 style={styles.formTitle}>Add your experience</h3>
           <input
             type="text"
             placeholder="Your name"
-            className="border border-black px-4 py-2 rounded-lg placeholder:text-gray-500"
+            style={styles.formInput}
             value={name}
             onChange={(e) => setName(e.target.value)}
           />
           <textarea
             placeholder="Write your experience..."
-            className="border border-black px-4 py-2 rounded-lg placeholder:text-gray-500 resize-none"
-            rows={3}
+            style={styles.formTextarea}
+            rows={2}
             value={review}
             onChange={(e) => setReview(e.target.value)}
           />
           <button
             type="submit"
-            className="self-start px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-md"
+            style={styles.submitButton}
           >
             Submit
           </button>
@@ -122,15 +155,15 @@ const WriteReviewCard = () => {
       )}
 
       {step === "submitted" && (
-        <div className="flex flex-col justify-between h-full">
-          <p className="text-lg font-medium mb-4">“{review}”</p>
-          <div className="">
-            <p className="font-bold lowercase">{name}</p>
-            <p className="text-sm text-gray-500">
-              Thank you for your experience!
-            </p>
+        <>
+          <div style={styles.cardTextContainer}>
+            <p style={styles.cardText}>"{review}"</p>
           </div>
-        </div>
+          <div style={styles.cardFooter}>
+            <strong style={styles.cardFooterStrong}>{name}</strong>
+            <span style={styles.cardFooterSpan}>Groningen</span>
+          </div>
+        </>
       )}
     </div>
   );
@@ -147,6 +180,11 @@ export default function Reviews() {
   // For cursor feedback
   const [isDragging1, setIsDragging1] = useState(false);
   const [isDragging2, setIsDragging2] = useState(false);
+  
+  // Mobile single card navigation - separate for each row
+  const [currentCardIndex1, setCurrentCardIndex1] = useState(0);
+  const [currentCardIndex2, setCurrentCardIndex2] = useState(0);
+  const isMobile = windowWidth <= 768;
 
   useEffect(() => {
     // Only runs on client
@@ -161,8 +199,11 @@ export default function Reviews() {
   // Set initial drag offset when windowWidth changes
   useEffect(() => {
     if (windowWidth > 0) {
-      dragX1.set(-windowWidth * 0.2); // -20%
-      dragX2.set(-windowWidth * 0.1); // -10%
+      // Adjust initial offset based on screen size
+      const offset1 = windowWidth > 768 ? -windowWidth * 0.2 : -windowWidth * 0.05;
+      const offset2 = windowWidth > 768 ? -windowWidth * 0.1 : -windowWidth * 0.02;
+      dragX1.set(offset1);
+      dragX2.set(offset2);
     }
   }, [windowWidth, dragX1, dragX2]);
 
@@ -170,7 +211,31 @@ export default function Reviews() {
   const half = Math.ceil(reviews.length / 2);
   const row1 = [...reviews.slice(0, half)];
   const row2 = [...reviews.slice(half)];
-  row1.splice(Math.floor(row1.length / 2), 0, { isWriteCard: true });
+  
+  // Place write card at the beginning of row1 for mobile, middle for desktop
+  if (isMobile) {
+    row1.unshift({ isWriteCard: true }); // Add to beginning
+  } else {
+    row1.splice(Math.floor(row1.length / 2), 0, { isWriteCard: true }); // Add to middle
+  }
+  
+  // Mobile swipe handlers for row 1
+  const nextCard1 = () => {
+    setCurrentCardIndex1((prev) => (prev + 1) % row1.length);
+  };
+  
+  const prevCard1 = () => {
+    setCurrentCardIndex1((prev) => (prev - 1 + row1.length) % row1.length);
+  };
+  
+  // Mobile swipe handlers for row 2
+  const nextCard2 = () => {
+    setCurrentCardIndex2((prev) => (prev + 1) % row2.length);
+  };
+  
+  const prevCard2 = () => {
+    setCurrentCardIndex2((prev) => (prev - 1 + row2.length) % row2.length);
+  };
 
   return (
     <div className="relative z-[50]" ref={containerRef}>
@@ -254,57 +319,146 @@ export default function Reviews() {
           </div>
         </div>
 
-        <div style={styles.marqueeWrapper}>
-          {/* ✅ Top Row - Only drag, no scroll effect */}
-          <div style={styles.marqueeOuter}>
-            <motion.div
-              drag="x"
-              dragConstraints={{ left: -1500, right: 0 }}
-              style={{
-                ...styles.marqueeInner,
-                x: dragX1,
-                cursor: isDragging1 ? "grabbing" : "grab",
-              }}
-              onDragStart={() => setIsDragging1(true)}
-              onDragEnd={() => setIsDragging1(false)}
-              transition={{ type: "tween", ease: "easeInOut", duration: 0.5 }}
-            >
-              {row1.map((r, i) =>
-                r.isWriteCard ? (
-                  <div
-                    key="write"
-                    className="sm:ml-auto sm:mr-auto" // Center only on small screens
-                    style={{ flexShrink: 0 }}
-                  >
-                    <WriteReviewCard />
-                  </div>
+        {/* Mobile: Two row single card view */}
+        {isMobile ? (
+          <div style={styles.mobileWrapper}>
+            {/* Row 1 */}
+            <div style={styles.mobileRowContainer}>
+              <motion.div
+                key={`row1-${currentCardIndex1}`}
+                drag="x"
+                dragConstraints={{ left: -100, right: 100 }}
+                onDragEnd={(event, info) => {
+                  if (info.offset.x > 50) {
+                    prevCard1();
+                  } else if (info.offset.x < -50) {
+                    nextCard1();
+                  }
+                }}
+                initial={{ opacity: 0, x: 50 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -50 }}
+                transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                style={styles.mobileCardContainer}
+              >
+                {row1[currentCardIndex1]?.isWriteCard ? (
+                  <WriteReviewCard />
                 ) : (
-                  <ReviewCard key={`r1-${i}`} {...r} />
-                )
-              )}
-            </motion.div>
-          </div>
+                  <ReviewCard {...row1[currentCardIndex1]} />
+                )}
+              </motion.div>
+              
+              {/* Navigation dots for row 1 */}
+              <div style={styles.dotsContainer}>
+                {row1.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setCurrentCardIndex1(index)}
+                    style={{
+                      ...styles.dot,
+                      backgroundColor: index === currentCardIndex1 ? "#f57f3b" : "#666"
+                    }}
+                  />
+                ))}
+              </div>
+            </div>
 
-          {/* ✅ Bottom Row - Only drag, no scroll effect, and staggered */}
-          <div style={styles.marqueeOuter}>
-            <motion.div
-              drag="x"
-              dragConstraints={{ left: -1000, right: 0 }}
-              style={{
-                ...styles.marqueeInner,
-                x: dragX2,
-                cursor: isDragging2 ? "grabbing" : "grab",
-              }}
-              onDragStart={() => setIsDragging2(true)}
-              onDragEnd={() => setIsDragging2(false)}
-              transition={{ type: "tween", ease: "easeInOut", duration: 0.5 }}
-            >
-              {row2.map((r, i) => (
-                <ReviewCard key={`r2-${i}`} {...r} />
-              ))}
-            </motion.div>
+            {/* Row 2 */}
+            <div style={styles.mobileRowContainer}>
+              <motion.div
+                key={`row2-${currentCardIndex2}`}
+                drag="x"
+                dragConstraints={{ left: -100, right: 100 }}
+                onDragEnd={(event, info) => {
+                  if (info.offset.x > 50) {
+                    prevCard2();
+                  } else if (info.offset.x < -50) {
+                    nextCard2();
+                  }
+                }}
+                initial={{ opacity: 0, x: 50 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -50 }}
+                transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                style={styles.mobileCardContainer}
+              >
+                <ReviewCard {...row2[currentCardIndex2]} />
+              </motion.div>
+              
+              {/* Navigation dots for row 2 */}
+              <div style={styles.dotsContainer}>
+                {row2.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setCurrentCardIndex2(index)}
+                    style={{
+                      ...styles.dot,
+                      backgroundColor: index === currentCardIndex2 ? "#f57f3b" : "#666"
+                    }}
+                  />
+                ))}
+              </div>
+            </div>
           </div>
-        </div>
+        ) : (
+          /* Desktop: Original marquee layout */
+          <div style={styles.marqueeWrapper}>
+            {/* ✅ Top Row - Only drag, no scroll effect */}
+            <div style={{
+              ...styles.marqueeOuter,
+              paddingLeft: "200px"
+            }}>
+              <motion.div
+                drag="x"
+                dragConstraints={{ left: -1500, right: 0 }}
+                style={{
+                  ...styles.marqueeInner,
+                  x: dragX1,
+                  cursor: isDragging1 ? "grabbing" : "grab",
+                }}
+                onDragStart={() => setIsDragging1(true)}
+                onDragEnd={() => setIsDragging1(false)}
+                transition={{ type: "tween", ease: "easeInOut", duration: 0.5 }}
+              >
+                {row1.map((r, i) =>
+                  r.isWriteCard ? (
+                    <div
+                      key="write"
+                      style={{ flexShrink: 0 }}
+                    >
+                      <WriteReviewCard />
+                    </div>
+                  ) : (
+                    <ReviewCard key={`r1-${i}`} {...r} />
+                  )
+                )}
+              </motion.div>
+            </div>
+
+            {/* ✅ Bottom Row - Only drag, no scroll effect, and staggered */}
+            <div style={{
+              ...styles.marqueeOuter,
+              paddingLeft: "200px"
+            }}>
+              <motion.div
+                drag="x"
+                dragConstraints={{ left: -1000, right: 0 }}
+                style={{
+                  ...styles.marqueeInner,
+                  x: dragX2,
+                  cursor: isDragging2 ? "grabbing" : "grab",
+                }}
+                onDragStart={() => setIsDragging2(true)}
+                onDragEnd={() => setIsDragging2(false)}
+                transition={{ type: "tween", ease: "easeInOut", duration: 0.5 }}
+              >
+                {row2.map((r, i) => (
+                  <ReviewCard key={`r2-${i}`} {...r} />
+                ))}
+              </motion.div>
+            </div>
+          </div>
+        )}
       </section>
     </div>
   );
@@ -356,7 +510,6 @@ const styles = {
   marqueeOuter: {
     overflow: "hidden",
     width: "100%",
-    paddingLeft: "200px",
   },
   marqueeInner: {
     display: "flex",
@@ -375,18 +528,63 @@ const styles = {
     display: "flex",
     flexDirection: "column",
     justifyContent: "space-between",
-    minHeight: 160,
+    height: 160,
     minWidth: 240,
     maxWidth: 400,
     flexShrink: 0,
     textAlign: "left",
     transition: "all 0.5s cubic-bezier(0.4,0,0.2,1)",
   },
+  // Mobile-specific styles
+  mobileWrapper: {
+    display: "flex",
+    flexDirection: "column",
+    gap: 40,
+    width: "100%",
+  },
+  mobileRowContainer: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    gap: 20,
+    width: "100%",
+    padding: "0 20px",
+  },
+  mobileCardContainer: {
+    display: "flex",
+    justifyContent: "center",
+    width: "100%",
+    cursor: "grab",
+  },
+  dotsContainer: {
+    display: "flex",
+    gap: 8,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  dot: {
+    width: 8,
+    height: 8,
+    borderRadius: "50%",
+    border: "none",
+    cursor: "pointer",
+    transition: "background-color 0.3s ease",
+  },
+  cardTextContainer: {
+    flex: 1,
+    overflowY: "auto",
+    overflowX: "hidden",
+    maxHeight: "6rem", // Approximately 4 lines (1.5rem line-height * 4)
+    marginBottom: 12,
+    wordWrap: "break-word",
+    wordBreak: "break-word",
+  },
   cardText: {
     fontSize: 16,
     fontWeight: 500,
-    lineHeight: 1.6,
-    marginBottom: 18,
+    lineHeight: 1.5,
+    margin: 0,
+    whiteSpace: "pre-wrap",
   },
   cardFooter: {
     display: "flex",
@@ -412,5 +610,58 @@ const styles = {
     fontWeight: "bold",
     cursor: "pointer",
     marginTop: "10px",
+  },
+  writeCardContent: {
+    display: "flex",
+    flexDirection: "column",
+    gap: 8,
+    height: "100%",
+    justifyContent: "space-between",
+  },
+  formContent: {
+    display: "flex",
+    flexDirection: "column",
+    gap: 8,
+    height: "100%",
+    justifyContent: "space-between",
+  },
+  formTitle: {
+    fontSize: "1.1rem",
+    fontWeight: 600,
+    color: "#0d0c0b",
+  },
+  formInput: {
+    border: "1px solid #0d0c0b",
+    borderRadius: "8px",
+    padding: "8px 12px",
+    fontSize: "0.9rem",
+    color: "#0d0c0b",
+  },
+  formTextarea: {
+    border: "1px solid #0d0c0b",
+    borderRadius: "8px",
+    padding: "8px 12px",
+    fontSize: "0.9rem",
+    color: "#0d0c0b",
+    resize: "none",
+    minHeight: "40px",
+    maxHeight: "80px",
+    overflowY: "auto",
+    overflowX: "hidden",
+    wordWrap: "break-word",
+    wordBreak: "break-word",
+    whiteSpace: "pre-wrap",
+  },
+  submitButton: {
+    background: "#f57f3b",
+    color: "#fff",
+    border: "none",
+    padding: "8px 12px",
+    borderRadius: "6px",
+    fontWeight: "bold",
+    cursor: "pointer",
+    marginTop: "10px",
+    alignSelf: "flex-start",
+    fontSize: "0.9rem",
   },
 };

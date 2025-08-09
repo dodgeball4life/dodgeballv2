@@ -162,6 +162,14 @@ export default function FundsAccessibility() {
         height={20}
         className="absolute bottom-[30px] 2xl:right-[10%] xl:right-[10px] size-45 xl:block hidden"
       />
+      {/* Mobile-only doodle for Funds section */}
+      <Image
+        src="/assets/bg/review 1.svg"
+        alt="Hero Background"
+        width={20}
+        height={20}
+        className="block xl:hidden absolute bottom-4 left-4 w-35 h-35"
+      />
       <div className={`${styles.container}  relative z-50`}>
         <div className={styles.sectionTitle} ref={titleRef}>
           {"Funds & Accessibility".split("").map((letter, index) => (

@@ -144,18 +144,33 @@ export default function PricingPlans() {
         className="absolute top-[17px] right-[10%] size-45 xl:block hidden"
       />
 
-       <Image
+      <Image
         src="/assets/bg/review 2.svg"
         alt="Hero Background"
         width={20}
         height={20}
         className="absolute bottom-[-5px] left-[8%] size-35 xl:block hidden"
       />
+      {/* Mobile-only doodles */}
+      <Image
+        src="/assets/bg/review 1.svg"
+        alt="Hero Background"
+        width={20}
+        height={20}
+        className="block xl:hidden absolute bottom-1 right-10 size-35"
+      />
+      <Image
+        src="/assets/bg/review 2.svg"
+        alt="Hero Background"
+        width={20}
+        height={20}
+        className="block xl:hidden absolute top-75 left-5 size-30"
+      />
       <div
         className={`${styles.pricingPlan}  relative z-50`}
         ref={containerRef}
       >
-        <div className={`${styles.sectionTitle}  relative z-50`} ref={titleRef}>
+        <div className={`${styles.sectionTitle}  relative z-50`} ref={titleRef} style={{ fontFamily: 'var(--font-inter), Inter, -apple-system, BlinkMacSystemFont, sans-serif' }}>
           {windowWidth > 1024 ? 
             "Tickets & Memberships".split("").map((letter, index) => (
               <span 
@@ -251,7 +266,7 @@ export default function PricingPlans() {
                 {plan.tag && (
                   <div className={styles.popularTag}>{plan.tag}</div>
                 )}
-                <h2>{plan.title}</h2>
+                <h2 style={{ fontFamily: 'var(--font-inter), Inter, -apple-system, BlinkMacSystemFont, sans-serif' }}>{plan.title}</h2>
                 <div className={styles.price}>
                   {plan.price}
                   <span>€ (EUR)</span>

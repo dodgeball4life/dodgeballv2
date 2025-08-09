@@ -168,7 +168,7 @@ export default function FundsAccessibility() {
         alt="Hero Background"
         width={20}
         height={20}
-        className="block xl:hidden absolute bottom-4 left-4 w-35 h-35"
+        className="block xl:hidden absolute bottom-4 rotate-330 left-4 w-40 h-40"
       />
       <div className={`${styles.container}  relative z-50`}>
         <div className={styles.sectionTitle} ref={titleRef}>

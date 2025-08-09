@@ -1,0 +1,319 @@
+.navbarContainer {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 50;
+  /* Performance optimizations */
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  transform: translateX(-50%) translateZ(0); /* Hardware acceleration */
+}
+
+.nav {
+  background: #141414;
+  color: #F0EEE7;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  width: 100%;
+  max-width: 336px;
+  gap: 30px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  z-index: 51;
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  .navbarContainer {
+    padding: 24px;
+  }
+  
+  .nav {
+    max-width: 400px;
+    padding: 16px 24px;
+    gap: 40px;
+  }
+}
+
+@media (min-width: 1025px) {
+  .navbarContainer {
+    padding: 10px;
+  }
+  
+  .nav {
+    max-width: 450px;
+    padding: 15px 20px;
+    gap: 50px;
+  }
+}
+
+@media (min-width: 768px) {
+  .nav {
+    max-width: 864px;
+  }
+}
+
+.logo {
+  margin-left: 15px;
+}
+
+.logo img {
+  height: 20px;
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.4));
+}
+
+.logoDesktop {
+  display: block;
+}
+
+.logoMobile {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .logo {
+    margin-left: 5px;
+  }
+  
+  .logo img {
+    height: 16px;
+  }
+  
+  .logoDesktop {
+    display: none;
+  }
+  
+  .logoMobile {
+    display: block;
+  }
+}
+
+.right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  position: relative;
+}
+
+.helpWrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.helpArea {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.help {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #F0EEE7;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+  padding: 6px;
+  transition: all 0.3s ease;
+}
+
+.arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s ease;
+  margin-left: 2px;
+  transform: rotate(180deg);
+}
+
+.helpArea:hover .arrow {
+  transform: rotate(0deg);
+}
+
+.helpHoverArea {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  width: 100%;
+  height: 10px;
+}
+
+.helpMenu {
+  position: absolute;
+  top: calc(100% + 0px);
+  right: 0;
+  background: #141414;
+  border-radius: 12px;
+  padding: 8px 0;
+  display: none;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 180px;
+  z-index: 10;
+}
+
+.helpMenu a {
+  padding: 12px 20px !important;
+  font-size: 0.95rem !important;
+  color: #F0EEE7 !important;
+  text-decoration: none !important;
+  transition: color 0.25s ease !important;
+  display: block !important;
+}
+
+.helpMenu a:hover {
+  color: #D5DF26 !important;
+  background: transparent !important;
+}
+
+.menuButton {
+  background: transparent;
+  border: 2px solid #F0EEE7;
+  color: #F0EEE7;
+  padding: 8px 24px;
+  border-radius: 999px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+.menuButton span {
+  position: relative;
+  z-index: 2;
+}
+
+.ripple {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background: #F0EEE7;
+  opacity: 0.4;
+  border-radius: 50%;
+  transform: scale(0);
+  animation: ripple-animation 0.6s ease-out;
+  pointer-events: none;
+  z-index: 1;
+}
+
+@keyframes ripple-animation {
+  to {
+    transform: scale(8);
+    opacity: 0;
+  }
+}
+
+.menuButton:hover {
+  color: #141414;
+  background: #D5DF26;
+  border-color: #D5DF26;
+}
+
+.moreMenuButton {
+  color: inherit;
+  font-family: inherit;
+}
+
+.menuContentContainer {
+  overflow: hidden;
+  backdrop-filter: blur(40px);
+  -webkit-backdrop-filter: blur(40px);
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  overscroll-behavior: none;
+}
+
+.moreMenuContainer {
+  margin-bottom: 0;
+  padding-left: 0;
+  margin-top: 0;
+}
+
+.moreMenuItem {
+  margin-bottom: 0.5rem;
+}
+
+@media (max-width: 767px) {
+  .moreMenuItem {
+    margin-bottom: 0.25rem;
+  }
+  
+  .moreMenuLink {
+    font-size: 1rem !important;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .moreMenuLink {
+    font-size: 1.25rem !important;
+  }
+}
+
+.navbarContainer.menuOpen {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100000;
+}
+
+.nav.menuOpen {
+  background: #141414;
+  color: #F0EEE7;
+  z-index: 100001;
+}
+
+.navHidden {
+  opacity: 0;
+  transform: translateX(-50%) translateY(-100%);
+  pointer-events: none;
+}
+
+.navVisible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+  pointer-events: auto;
+}
+
+/* Keyframes for navbar bounce animation when appearing from pill */
+@keyframes navbarBounceIn {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-100%) scale(0.3) translateZ(0);
+  }
+  50% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(10px) scale(1.1) translateZ(0);
+  }
+  70% {
+    transform: translateX(-50%) translateY(-5px) scale(0.95) translateZ(0);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1) translateZ(0);
+  }
+}
+
+/* Performance optimization for all navbar states */
+.navVisible,
+.navHidden {
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+} 

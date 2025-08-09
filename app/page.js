@@ -307,7 +307,7 @@ export default function HomePage() {
             alt="Hero Background"
             width={20}
             height={20}
-            className="absolute top-[10%] right-[15%] size-50 xl:block hidden"
+            className="absolute top-[10%] right-[15%] size-60 xl:block hidden"
           />
           {/* Updated Widget Grid */}
           <div className="grid grid-cols-20 relative z-50 gap-4 grid-flow-dense auto-rows-[72px] mx-auto max-w-[336px] md:max-w-[864px] mt-16 pt-16 sm:pt-16 md:pt-16 lg:pt-0 pb-24 md:pb-16 lg:pb-0">

@@ -90,6 +90,24 @@ export default function FundsAccessibility() {
 
   return (
     <div ref={sectionRef} className={`${styles.fundsAccessibility} relative `}>
+      {/* Desktop-only doodle */}
+      <Image
+        src="/assets/bg/review3.svg"
+        alt="Funds Doodle Desktop"
+        width={180}
+        height={180}
+        className="absolute xl:block hidden right-10 bottom-10 z-10"
+        priority
+      />
+      {/* Mobile-only doodle (extra, custom location/size) */}
+      <Image
+        src="/assets/bg/review3.svg"
+        alt="Funds Doodle Mobile"
+        width={120}
+        height={120}
+        className="absolute block xl:hidden rotate-345 left-8 bottom-8 z-10"
+        priority
+      />
       {/* <div className="absolute -top-[3px] sm:-top-[4px] md:-top-[7px] z-[50] left-0 w-full">
         <svg
           viewBox="0 0 1440 14"
@@ -155,21 +173,6 @@ export default function FundsAccessibility() {
           />
         </svg>
       </div> */}
-      <Image
-        src="/assets/bg/review3.svg"
-        alt="Hero Background"
-        width={20}
-        height={20}
-        className="absolute bottom-[30px] 2xl:right-[10%] xl:right-[10px] size-45 xl:block hidden"
-      />
-      {/* Mobile-only doodle for Funds section */}
-      <Image
-        src="/assets/bg/review 1.svg"
-        alt="Hero Background"
-        width={20}
-        height={20}
-        className="block xl:hidden absolute bottom-4 rotate-330 left-4 w-40 h-40"
-      />
       <div className={`${styles.container}  relative z-50`}>
         <div className={styles.sectionTitle} ref={titleRef}>
           {"Funds & Accessibility".split("").map((letter, index) => (
